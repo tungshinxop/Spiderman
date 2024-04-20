@@ -32,7 +32,9 @@ public class SpidermanCharacterController : MonoBehaviour
     
     [Header("Ground")]
     [SerializeField] private Transform groundCheckPos;
+    [SerializeField] private Transform slopeCheckPos;
     [SerializeField] private float groundRadius;
+    [SerializeField] private float slopeCheckDist;
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Data:")] 
@@ -45,8 +47,9 @@ public class SpidermanCharacterController : MonoBehaviour
     public float xBlendRate = 10f;
     public float coyoteTime = 0.25f;
     public float jumpBufferTime = 0.25f;
-    [FormerlySerializedAs("jumpForce")] public float jumpHeight = 10f;
+    public float jumpHeight = 10f;
     public float fallMultiplier = 10f;
+    public float walkableSlopeAngle = 45f;
     
     
     [Header("Air sub-states:")]
@@ -59,7 +62,8 @@ public class SpidermanCharacterController : MonoBehaviour
 
     [Header("Non-persistant data: ")]
     public BaseState currentState;
-    
+
+    private RaycastHit _slopeHit;
     private Vector3 _moveInput;
     private bool _pressedJump;
     private float _turnVelocity;
@@ -71,6 +75,7 @@ public class SpidermanCharacterController : MonoBehaviour
 
     [HideInInspector] public float JumpForce;    
     [HideInInspector] public bool IsGrounded;
+    [HideInInspector] public bool IsOnSlope;
     
     public bool PressedJump
     {
@@ -96,6 +101,7 @@ public class SpidermanCharacterController : MonoBehaviour
     void Update()
     {
         HandleInput();
+        HandleSlope();
         HandleRotation();
         HandleJumpInput();
         HandleJumpFeel();
@@ -178,9 +184,24 @@ public class SpidermanCharacterController : MonoBehaviour
         _jumpBufferCounter = Mathf.Clamp(_jumpBufferCounter, 0, jumpBufferTime);
     }
     
-    public bool IsOnSlope()
+    private void HandleSlope()
     {
-        return false;
+        //cast a ray down to find the normal of the ground to determine if it is a slope
+        if (IsGrounded && Physics.Raycast(slopeCheckPos.position, Vector3.down, out _slopeHit, capsuleCollider.height + .2f, groundLayer))
+        {
+            if (_slopeHit.normal != Vector3.up)
+            {
+                if (Vector3.Angle(_slopeHit.normal, Vector3.up) <= walkableSlopeAngle)
+                {
+                    rb.useGravity = false;
+                    IsOnSlope = true;
+                    return;
+                }
+            }
+        }
+        
+        rb.useGravity = true;
+        IsOnSlope = false;
     }
 
     public bool IsValidJump()
@@ -199,7 +220,12 @@ public class SpidermanCharacterController : MonoBehaviour
     public void Move()
     {
         var speed = IsGrounded ? groundSpeed * speedMultiplier : airSpeed * speedMultiplier;
-        rb.AddForce(Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward * speed, ForceMode.Acceleration);
+        var dir = Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward;
+        if (IsOnSlope)
+        {
+            dir = Vector3.ProjectOnPlane(Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward, _slopeHit.normal).normalized;
+        }
+        rb.AddForce(dir * speed, ForceMode.Acceleration);
     }
 
     public void SetToggleHandTrail(bool state)
@@ -226,6 +252,16 @@ public class SpidermanCharacterController : MonoBehaviour
 
             Gizmos.color = Color.blue;
             DrawArrow.ForGizmo(groundCheckPos.position, cachedTransform.forward);
+            
+            Gizmos.color = IsOnSlope ? Color.green : Color.red;
+            DrawArrow.ForGizmo(slopeCheckPos.position, Vector3.down * slopeCheckDist);
+            
+            if (IsOnSlope)
+            {
+                Gizmos.color = new Color(0f, 0.98f, 1f);
+                DrawArrow.ForGizmo(groundCheckPos.position, Vector3.ProjectOnPlane(Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward, _slopeHit.normal).normalized);
+                DrawArrow.ForGizmo(_slopeHit.point, _slopeHit.normal);
+            }
         }
     }
 #endif

@@ -74,7 +74,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.35
+  m_Time: 0.15
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -96,15 +96,15 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 0.5750438, b: 0.042452812, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0.67058825}
-      key2: {r: 1, g: 1, b: 1, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 1, g: 1, b: 1, a: 0}
+      key2: {r: 1, g: 1, b: 1, a: 0.18910417}
+      key3: {r: 0, g: 0, b: 0, a: 0.67058825}
+      key4: {r: 0, g: 0, b: 0, a: 0.67058825}
       key5: {r: 0, g: 0, b: 0, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 43369
+      ctime1: 40670
       ctime2: 65535
       ctime3: 0
       ctime4: 0
@@ -112,10 +112,10 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
+      atime1: 40092
+      atime2: 48380
+      atime3: 65535
+      atime4: 65535
       atime5: 0
       atime6: 0
       atime7: 0
@@ -131,6 +131,37 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!1 &20919388607427648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2087312961391298292}
+  m_Layer: 0
+  m_Name: SlopePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2087312961391298292
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 20919388607427648}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.775, z: 0.195}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9191784433491747535}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &118823101753810419
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,7 +395,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9191784433491747535}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &697008024985507000
 GameObject:
@@ -1148,7 +1179,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.35
+  m_Time: 0.15
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -1170,15 +1201,15 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 0.5750438, b: 0.042452812, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0.67058825}
-      key2: {r: 1, g: 1, b: 1, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 1, g: 1, b: 1, a: 0}
+      key2: {r: 1, g: 1, b: 1, a: 0.18910417}
+      key3: {r: 0, g: 0, b: 0, a: 0.67058825}
+      key4: {r: 0, g: 0, b: 0, a: 0.67058825}
       key5: {r: 0, g: 0, b: 0, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 43369
+      ctime1: 40670
       ctime2: 65535
       ctime3: 0
       ctime4: 0
@@ -1186,10 +1217,10 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
+      atime1: 40092
+      atime2: 48380
+      atime3: 65535
+      atime4: 65535
       atime5: 0
       atime6: 0
       atime7: 0
@@ -2236,8 +2267,9 @@ Transform:
   - {fileID: 8648457475811888454}
   - {fileID: 2361577826324863078}
   - {fileID: 6350633282013239319}
-  - {fileID: 8236829638906501948}
+  - {fileID: 2087312961391298292}
   - {fileID: 2948366450845276806}
+  - {fileID: 8236829638906501948}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2293,7 +2325,9 @@ MonoBehaviour:
   headCheckPos: {fileID: 2948366450845276806}
   capsuleCollider: {fileID: 5846330906117258841}
   groundCheckPos: {fileID: 6350633282013239319}
+  slopeCheckPos: {fileID: 2087312961391298292}
   groundRadius: 0.35
+  slopeCheckDist: 3
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -2306,8 +2340,9 @@ MonoBehaviour:
   xBlendRate: 10
   coyoteTime: 0.25
   jumpBufferTime: 0.25
-  jumpHeight: 2000
+  jumpHeight: 20
   fallMultiplier: 8
+  walkableSlopeAngle: 60
   jumpState: {fileID: 5398453040482892978}
   fallState: {fileID: 5641748512225809041}
   runState: {fileID: 7391590953323474153}
@@ -2315,6 +2350,7 @@ MonoBehaviour:
   currentState: {fileID: 7840507181213272457}
   JumpForce: 0
   IsGrounded: 1
+  IsOnSlope: 0
 --- !u!1 &9200662916778583124
 GameObject:
   m_ObjectHideFlags: 0
