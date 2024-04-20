@@ -23,6 +23,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public Rigidbody rb;
     public Animator animator;
     public Transform cameraTransform;
+    public Transform cachedTransform;
     
     [Header("Ground")]
     [SerializeField] private Transform groundCheckPos;
@@ -49,13 +50,14 @@ public class SpidermanCharacterController : MonoBehaviour
     public BaseState currentState;
     
     private Vector3 _moveInput;
+    private Vector3 _moveDir;
     private bool _pressedJump;
     private float _turnVelocity;
     
     [HideInInspector] public bool IsGrounded;
     [HideInInspector] public int XAxisHash = Animator.StringToHash("XAxis");
     
-    public Vector3 MoveInput => _moveInput;
+    public Vector3 MoveDir => _moveDir;
     public bool PressedJump => _pressedJump;
     void Start()
     {
@@ -78,6 +80,8 @@ public class SpidermanCharacterController : MonoBehaviour
     void HandleInput()
     {
         _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        _moveDir = cachedTransform.forward * _moveInput.z + cachedTransform.right * _moveInput.x;
+
         if (_moveInput.x < 0)
         {
             animator.SetFloat(XAxisHash, -1);
@@ -107,7 +111,12 @@ public class SpidermanCharacterController : MonoBehaviour
     {
         if (_moveInput != Vector3.zero)
         {
-            var rot = Mathf.Atan2(_moveInput.x, _moveInput.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            var zInverse = _moveInput.z;
+            if (zInverse < 0)
+            {
+                zInverse *= -1;
+            }
+            var rot = Mathf.Atan2(_moveInput.x, zInverse) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, rot, ref _turnVelocity, turnTime);
         }
     }
@@ -126,10 +135,13 @@ public class SpidermanCharacterController : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheckPos.position, groundRadius);
             
             Gizmos.color = Color.red;
-            if (_moveInput != Vector3.zero)
+            if (_moveDir != Vector3.zero)
             {
-                Gizmos.DrawRay(groundCheckPos.position, _moveInput.normalized * 5f);
+                Gizmos.DrawRay(groundCheckPos.position, _moveDir.normalized * 5f);
             }
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(groundCheckPos.position, cachedTransform.forward);
         }
     }
 #endif

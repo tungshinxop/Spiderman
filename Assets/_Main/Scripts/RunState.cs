@@ -10,7 +10,7 @@ public class RunState : BaseState
         if(!gameObject.activeInHierarchy) return;
         
         var speed = _manager.groundSpeed * _manager.speedMultiplier;
-        _manager.rb.AddForce(_manager.MoveInput.normalized * speed , ForceMode.Acceleration);
+        _manager.rb.AddForce(_manager.MoveDir.normalized * speed , ForceMode.Acceleration);
         
         // if (_manager.IsOnSlope())
         // else
@@ -34,7 +34,7 @@ public class RunState : BaseState
     {
         if (_manager.IsGrounded)
         {
-            if (_manager.MoveInput == Vector3.zero)
+            if (_manager.MoveDir == Vector3.zero)
             {
                 SwitchState(_manager.idleState);
             }
