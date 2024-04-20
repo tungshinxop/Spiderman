@@ -9,7 +9,7 @@ public abstract class BaseState : MonoBehaviour
         _manager = manager;
         _manager.currentState = this;
 #if UNITY_EDITOR
-        Debug.LogError($"Update state {this.gameObject.name}");
+        //Debug.LogError($"Update state {this.gameObject.name}");
 #endif
     }
     public virtual void UpdateState()
