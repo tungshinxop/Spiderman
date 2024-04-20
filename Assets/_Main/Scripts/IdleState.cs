@@ -18,13 +18,13 @@ public class IdleState : BaseState
         CheckSwitchState();
     }
 
-    public override void ExitState()
+    protected override void ExitState()
     {
         _manager.animator.ResetTrigger(IdleHash);
         base.ExitState();
     }
 
-    public override void CheckSwitchState()
+    protected override void CheckSwitchState()
     {
         if (_manager.IsGrounded)
         {

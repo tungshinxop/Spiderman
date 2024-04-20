@@ -24,13 +24,13 @@ public class RunState : BaseState
         _manager.animator.SetTrigger(RunHash);
     }
 
-    public override void ExitState()
+    protected override void ExitState()
     {
         _manager.animator.ResetTrigger(RunHash);
         base.ExitState();
     }
 
-    public override void CheckSwitchState()
+    protected override void CheckSwitchState()
     {
         if (_manager.IsGrounded)
         {

@@ -22,20 +22,20 @@ public class SpidermanCharacterController : MonoBehaviour
 {
     public Rigidbody rb;
     public Animator animator;
-
-    public int XAxisHash = Animator.StringToHash("XAxis");
+    public Transform cameraTransform;
     
     [Header("Ground")]
     [SerializeField] private Transform groundCheckPos;
     [SerializeField] private float groundRadius;
     [SerializeField] private LayerMask groundLayer;
-    
+
     [Header("Data:")] 
+    public float turnTime = 0.2f;
     public float speedMultiplier = 1f;
     public float groundSpeed;
     public float airSpeed;
-    public float groundDrag;
-    public float airDrag;
+    public float groundDrag = 4;
+    public float airDrag = 2;
     
     [Header("Air sub-states:")]
     public BaseState jumpState;
@@ -45,12 +45,15 @@ public class SpidermanCharacterController : MonoBehaviour
     public BaseState runState;
     public BaseState idleState;
 
+    [Header("Non-persistant data: ")]
     public BaseState currentState;
     
     private Vector3 _moveInput;
     private bool _pressedJump;
-
+    private float _turnVelocity;
+    
     [HideInInspector] public bool IsGrounded;
+    [HideInInspector] public int XAxisHash = Animator.StringToHash("XAxis");
     
     public Vector3 MoveInput => _moveInput;
     public bool PressedJump => _pressedJump;
@@ -63,6 +66,7 @@ public class SpidermanCharacterController : MonoBehaviour
     void Update()
     {
         HandleInput();
+        HandleRotation();
         CheckGround();
         
         if (currentState != null)
@@ -90,8 +94,8 @@ public class SpidermanCharacterController : MonoBehaviour
 
     private void CheckGround()
     {
-        //cast a sphere to check grounded
         IsGrounded = Physics.CheckSphere(groundCheckPos.position, groundRadius, groundLayer);
+        rb.drag = IsGrounded ? groundDrag : airDrag;
     }
     
     void HandleJumpInput()
@@ -101,7 +105,11 @@ public class SpidermanCharacterController : MonoBehaviour
     
     void HandleRotation()
     {
-        
+        if (_moveInput != Vector3.zero)
+        {
+            var rot = Mathf.Atan2(_moveInput.x, _moveInput.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, rot, ref _turnVelocity, turnTime);
+        }
     }
     
     public bool IsOnSlope()

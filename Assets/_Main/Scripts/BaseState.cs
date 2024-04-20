@@ -19,13 +19,13 @@ public abstract class BaseState : MonoBehaviour
 
     public virtual void SwitchState(BaseState nextState)
     {
-        this.ExitState();
+        ExitState();
         nextState.EnterState(_manager);
     }
 
-    public virtual void ExitState()
+    protected virtual void ExitState()
     {
         gameObject.SetActive(false);
     }
-    public abstract void CheckSwitchState();
+    protected abstract void CheckSwitchState();
 }

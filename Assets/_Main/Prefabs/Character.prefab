@@ -212,7 +212,7 @@ Rigidbody:
   m_GameObject: {fileID: 9191784433491747532}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 2
+  m_Drag: 4
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -233,16 +233,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 7006572755802063714}
   animator: {fileID: 3379197891853358908}
+  XAxisHash: -902265393
   groundCheckPos: {fileID: 6350633282013239319}
   groundRadius: 0.225
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  turnTime: 0.1
   speedMultiplier: 10
   groundSpeed: 5
-  airSpeed: 0
-  groundDrag: 0
-  airDrag: 0
+  airSpeed: 6
+  groundDrag: 4
+  airDrag: 2
   jumpState: {fileID: 0}
   fallState: {fileID: 0}
   runState: {fileID: 7391590953323474153}
