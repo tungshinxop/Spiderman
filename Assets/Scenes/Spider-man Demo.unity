@@ -123,11 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &103925052 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9191784433491747535, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
-  m_PrefabInstance: {fileID: 545937918}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &211931496
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,17 +206,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5045470768132376717, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
-      propertyPath: cachedTransform
-      value: 
-      objectReference: {fileID: 103925052}
+      propertyPath: groundRadius
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 5045470768132376717, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 1185584761}
-    - target: {fileID: 8236829638906501948, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 9191784433491747532, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
       propertyPath: m_Name
       value: Character

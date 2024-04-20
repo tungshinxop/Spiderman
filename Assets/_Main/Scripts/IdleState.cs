@@ -28,7 +28,7 @@ public class IdleState : BaseState
     {
         if (_manager.IsGrounded)
         {
-            if (_manager.MoveDir != Vector3.zero)
+            if (_manager.MoveInput != Vector3.zero)
             {
                 SwitchState(_manager.runState);
             }
