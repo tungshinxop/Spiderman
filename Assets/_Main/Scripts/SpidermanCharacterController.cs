@@ -15,16 +15,26 @@ public enum SubStates
     Run,
     Idle,
     Jump,
-    Fall
+    Fall,
+    Swing
 }
 
 public class SpidermanCharacterController : MonoBehaviour
 {
+    //Poorly structured variables, to be updated (or not)
     public Rigidbody rb;
     public Animator animator;
     public Transform cameraTransform;
     public Transform cachedTransform;
     public TrailRenderer[] handTrails;
+    
+
+    [Header("Web detector")] 
+    [SerializeField] private Transform webDetectorPos;
+    [SerializeField] private int numberOfRays = 10;
+    [SerializeField] private Vector2 angleRange = new Vector2(90, 30);
+    [SerializeField] private float durationCheck = 0.75f;
+    [SerializeField] private float detectorRange = 30f;
     
     [Header("Head")]
     [SerializeField] private Transform headCheckPos;
@@ -55,6 +65,7 @@ public class SpidermanCharacterController : MonoBehaviour
     [Header("Air sub-states:")]
     public BaseState jumpState;
     public BaseState fallState;
+    public BaseState swingState;
     
     [Header("Ground sub-states:")]
     public BaseState runState;
@@ -63,6 +74,7 @@ public class SpidermanCharacterController : MonoBehaviour
     [Header("Non-persistant data: ")]
     public BaseState currentState;
 
+    private Coroutine _webDetectionRoutine;
     private RaycastHit _slopeHit;
     private Vector3 _moveInput;
     private bool _pressedJump;
@@ -72,10 +84,13 @@ public class SpidermanCharacterController : MonoBehaviour
     private float _coyoteCounter;
     private float _jumpBufferCounter;
     private float _previousJumpHeight;
+    private List<Vector3> _pointsToCheck = new List<Vector3>();
 
     [HideInInspector] public float JumpForce;    
     [HideInInspector] public bool IsGrounded;
     [HideInInspector] public bool IsOnSlope;
+
+    public List<Vector3> PointsToCheck => _pointsToCheck;
     
     public bool PressedJump
     {
@@ -106,6 +121,7 @@ public class SpidermanCharacterController : MonoBehaviour
         HandleJumpInput();
         HandleJumpFeel();
         HandleGround();
+        HandleWebDetectionInput();
         
         if (currentState != null)
         {
@@ -160,6 +176,15 @@ public class SpidermanCharacterController : MonoBehaviour
         if (!IsGrounded && rb.velocity.y <= 0)
         {
             rb.AddForce(new Vector3(0, -fallMultiplier, 0) * rb.mass, ForceMode.Acceleration);
+            RaycastHit hit;
+            if (Physics.Raycast(slopeCheckPos.position, Vector3.down, out hit,Mathf.Infinity, groundLayer))
+            {
+                animator.SetFloat(AnimationHash.DistFromGround, hit.distance);
+            }
+            else
+            {
+                animator.SetFloat(AnimationHash.DistFromGround, -1);
+            }
         }
     }
 
@@ -191,7 +216,8 @@ public class SpidermanCharacterController : MonoBehaviour
         {
             if (_slopeHit.normal != Vector3.up)
             {
-                if (Vector3.Angle(_slopeHit.normal, Vector3.up) <= walkableSlopeAngle)
+                var angle = Vector3.Angle(_slopeHit.normal, Vector3.up);
+                if (angle <= walkableSlopeAngle && angle >= 5f)
                 {
                     rb.useGravity = false;
                     IsOnSlope = true;
@@ -204,12 +230,67 @@ public class SpidermanCharacterController : MonoBehaviour
         IsOnSlope = false;
     }
 
+    private void HandleWebDetectionInput()
+    {
+        var temp = webDetectorPos.position;
+        temp.x = cachedTransform.position.x;
+        temp.z = cachedTransform.position.z;
+        webDetectorPos.position = temp;
+        if (Input.GetMouseButtonDown(0) && _webDetectionRoutine == null && currentState != swingState)
+        {
+            _webDetectionRoutine = StartCoroutine(IEDetectWeb());
+        }
+    }
+
+    private IEnumerator IEDetectWeb()
+    {
+        _pointsToCheck.Clear();
+        var temp = new List<bool>();
+        var elapsedTime = 0f;
+        var angle = angleRange.x;
+        var angleBtwRays = 360f / numberOfRays;
+        while (elapsedTime < durationCheck)
+        {
+            angle = Mathf.Lerp( angleRange.x,  angleRange.y, elapsedTime / durationCheck);
+            for (int i = 0; i < numberOfRays; i++)
+            {
+                if (i + 1 > temp.Count)
+                {
+                    temp.Add(new bool());
+                    temp[^1] = false;
+                }
+
+                if (temp[i])
+                {
+                    continue;
+                }
+                
+                var upward = GetRotatedVector3(webDetectorPos.forward, Vector3.up, angleBtwRays * i);
+                var crossProduct = Vector3.Cross(upward, Vector3.up);
+                var dir = GetRotatedVector3(upward, crossProduct, angle);
+                RaycastHit hit;
+                if (Physics.Raycast(webDetectorPos.position, dir.normalized,  out hit, detectorRange,groundLayer))
+                {
+                    //Store available points
+                    temp[i] = true;
+                    _pointsToCheck.Add(hit.point);
+                }
+#if UNITY_EDITOR
+                Debug.DrawRay(webDetectorPos.position, dir.normalized * detectorRange, hit.collider == null ? Color.red: Color.yellow);
+#endif
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        _webDetectionRoutine = null;
+    }
+    
     public bool IsValidJump()
     {
         return _jumpBufferCounter > 0 && _coyoteCounter > 0;
     }
     
-
     public void ResetVelocity()
     {
         var velocity = rb.velocity;
@@ -236,6 +317,11 @@ public class SpidermanCharacterController : MonoBehaviour
         }
     }
     
+    private Vector3 GetRotatedVector3(Vector3 originalVector, Vector3 axisToRotateAround, float rotateAngle)
+    {
+        return Quaternion.AngleAxis(rotateAngle, axisToRotateAround) * originalVector;
+    }
+    
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -243,12 +329,6 @@ public class SpidermanCharacterController : MonoBehaviour
         {
             Gizmos.color = IsGrounded ? Color.green : Color.red;
             Gizmos.DrawWireSphere(groundCheckPos.position, groundRadius);
-            
-            Gizmos.color = Color.red;
-            if (_moveInput != Vector3.zero)
-            {
-                Gizmos.DrawRay(groundCheckPos.position, _moveInput.normalized * 5f);
-            }
 
             Gizmos.color = Color.blue;
             DrawArrow.ForGizmo(groundCheckPos.position, cachedTransform.forward);
@@ -261,6 +341,15 @@ public class SpidermanCharacterController : MonoBehaviour
                 Gizmos.color = new Color(0f, 0.98f, 1f);
                 DrawArrow.ForGizmo(groundCheckPos.position, Vector3.ProjectOnPlane(Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward, _slopeHit.normal).normalized);
                 DrawArrow.ForGizmo(_slopeHit.point, _slopeHit.normal);
+            }
+
+            if (_pointsToCheck != null && _pointsToCheck.Count > 0)
+            {
+                foreach (var point in _pointsToCheck)
+                {
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawSphere(point, 0.35f);
+                }
             }
         }
     }

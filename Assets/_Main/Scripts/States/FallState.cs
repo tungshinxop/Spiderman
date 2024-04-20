@@ -45,16 +45,24 @@ public class FallState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.IsGrounded)
+        if (_manager.PointsToCheck.Count > 0)
         {
-            if (_manager.MoveInput == Vector3.zero)
+            SwitchState(_manager.swingState);
+        }
+        else
+        {
+            if (_manager.IsGrounded)
             {
-                SwitchState(_manager.idleState);
-            }
-            else
-            {
-                SwitchState(_manager.runState);
+                if (_manager.MoveInput == Vector3.zero)
+                {
+                    SwitchState(_manager.idleState);
+                }
+                else
+                {
+                    SwitchState(_manager.runState);
+                }
             }
         }
+
     }
 }

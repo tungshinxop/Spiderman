@@ -24,22 +24,29 @@ public class IdleState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.PressedJump && _manager.IsValidJump())
+        if (_manager.PointsToCheck.Count > 0)
         {
-            SwitchState(_manager.jumpState);
+            SwitchState(_manager.swingState);
         }
         else
         {
-            if (_manager.IsGrounded)
+            if (_manager.PressedJump && _manager.IsValidJump())
             {
-                if (_manager.MoveInput != Vector3.zero)
-                {
-                    SwitchState(_manager.runState);
-                }
+                SwitchState(_manager.jumpState);
             }
             else
             {
-                SwitchState(_manager.fallState);
+                if (_manager.IsGrounded)
+                {
+                    if (_manager.MoveInput != Vector3.zero)
+                    {
+                        SwitchState(_manager.runState);
+                    }
+                }
+                else
+                {
+                    SwitchState(_manager.fallState);
+                }
             }
         }
     }

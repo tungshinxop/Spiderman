@@ -35,9 +35,16 @@ public class JumpState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.rb.velocity.y < 0) //velocity start decreasing => switch to fall state
+        if (_manager.PointsToCheck.Count > 0)
         {
-            SwitchState(_manager.fallState);
+            SwitchState(_manager.swingState);
+        }
+        else
+        {
+            if (_manager.rb.velocity.y < 0) //velocity start decreasing => switch to fall state
+            {
+                SwitchState(_manager.fallState);
+            }
         }
     }
 }

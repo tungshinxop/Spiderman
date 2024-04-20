@@ -9,6 +9,8 @@ public class AnimationHash
 
     public static int AirTime = Animator.StringToHash("AirTime");
     public static int RandomFallingAnim = Animator.StringToHash("RandomFallingAnim");
+
+    public static int DistFromGround = Animator.StringToHash("DistFromGround");
     
     public static int XAxis = Animator.StringToHash("XAxis");
 }
