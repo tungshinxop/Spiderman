@@ -1,4 +1,6 @@
-﻿public class LandRoll : BaseState
+﻿using UnityEngine;
+
+public class WallRunState : BaseState
 {
     protected override void CheckSwitchState()
     {

@@ -17,7 +17,8 @@ public enum SubStates
     Idle,
     Jump,
     Fall,
-    Swing
+    Swing,
+    WallRun
 }
 
 public class SpidermanCharacterController : MonoBehaviour
@@ -70,6 +71,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public BaseState jumpState;
     public BaseState fallState;
     public BaseState swingState;
+    public BaseState wallRun;
     
     [Header("Ground sub-states:")]
     public BaseState runState;
