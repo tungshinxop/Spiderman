@@ -32,9 +32,16 @@ public class RunState : BaseState
         {
             if (_manager.IsGrounded)
             {
+                if (_manager.CanWallRun)
+                {
+                    SwitchState(_manager.wallRun);
+                    return;
+                }
+                
                 if (_manager.PressedJump && _manager.IsValidJump())
                 {
                     SwitchState(_manager.jumpState);
+                    return;
                 }
                 
                 if (_manager.MoveInput == Vector3.zero)

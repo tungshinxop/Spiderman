@@ -12,4 +12,6 @@ public class AnimationHash
     public static int XAxis = Animator.StringToHash("XAxis");
     public static int Swing = Animator.StringToHash("Swing");
     public static int CurrentHand = Animator.StringToHash("CurrentHand");
+    public static int WallRun = Animator.StringToHash("WallRun");
+    public static int YAxis = Animator.StringToHash("YAxis");
 }

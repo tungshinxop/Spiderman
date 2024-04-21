@@ -32,6 +32,7 @@ public class FallState : BaseState
             _swappedToFreeFall = true;
             _manager.SetToggleHandTrail(true);
         }
+        _manager.UpdateAirLogic();
         base.UpdateState();
     }
 
@@ -46,6 +47,12 @@ public class FallState : BaseState
 
     protected override void CheckSwitchState()
     {
+        if (_manager.CanWallRun)
+        {
+            SwitchState(_manager.wallRun);
+            return;
+        }
+        
         if (_manager.IsFiredWeb())
         {
             SwitchState(_manager.swingState);

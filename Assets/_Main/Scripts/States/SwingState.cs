@@ -90,6 +90,12 @@ public class SwingState : BaseState
 
     protected override void CheckSwitchState()
     {
+        if (_manager.CanWallRun)
+        {
+            SwitchState(_manager.wallRun);
+            return;
+        }
+        
         if (_manager.IsGrounded)
         {
             if (_manager.MoveInput == Vector3.zero)

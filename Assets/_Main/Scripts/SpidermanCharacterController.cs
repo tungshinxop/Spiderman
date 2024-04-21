@@ -49,6 +49,7 @@ public class SpidermanCharacterController : MonoBehaviour
     [SerializeField] private float groundRadius;
     [SerializeField] private float slopeCheckDist;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float wallCheckDist;
 
     [Header("Data:")] 
     public float turnTime = 0.2f;
@@ -86,17 +87,22 @@ public class SpidermanCharacterController : MonoBehaviour
     private float _turnVelocity;
     private float _rotation;
     private float _xBlend;
+    private float _movementBlend;
     private float _coyoteCounter;
     private float _jumpBufferCounter;
     private float _previousJumpHeight;
     private List<Vector3> _pointsToCheck = new List<Vector3>();
+    private RaycastHit _wallHits;
 
+    //dont ever do this on normal projects, use public properties instead
     [HideInInspector] public float JumpForce;    
     [HideInInspector] public bool IsGrounded;
     [HideInInspector] public bool IsOnSlope;
     [HideInInspector] public bool HoldingMouse;
     [HideInInspector] public bool PreSwingState;
     [HideInInspector] public float SwingCooldown;
+    [HideInInspector] public bool CanWallRun;
+    [HideInInspector] public Vector3 LastWallNormal;
     
     public List<Vector3> PointsToCheck => _pointsToCheck;
 
@@ -117,7 +123,7 @@ public class SpidermanCharacterController : MonoBehaviour
         get => _jumpBufferCounter;
         set => _jumpBufferCounter = value;
     }
-
+    
     void Start()
     {
         currentState = idleState;
@@ -134,6 +140,7 @@ public class SpidermanCharacterController : MonoBehaviour
         HandleJumpInput();
         HandleJumpFeel();
         HandleGround();
+        HandleWall();
         HandleWebDetectionInput();
         
         if (currentState != null)
@@ -148,8 +155,11 @@ public class SpidermanCharacterController : MonoBehaviour
         _moveInput = _moveInput.normalized;
 
         var targetValue = _moveInput.x == 0 ? 0 : _moveInput.x < 0 ? -1 : 1;
+        var targetMovement = _moveInput.z > 0 || _moveInput.x != 0 ? 1 : 0;
         _xBlend = Mathf.Lerp(_xBlend, targetValue, Time.deltaTime * xBlendRate);
+        _movementBlend = Mathf.Lerp(_movementBlend, targetMovement, Time.deltaTime * xBlendRate);
         animator.SetFloat(AnimationHash.XAxis, _xBlend);
+        animator.SetFloat(AnimationHash.YAxis, _movementBlend);
     }
 
     void HandleRotation()
@@ -186,6 +196,10 @@ public class SpidermanCharacterController : MonoBehaviour
         IsGrounded = Physics.CheckSphere(groundCheckPos.position, groundRadius, groundLayer);
         rb.drag = IsGrounded ? groundDrag : airDrag;
         animator.SetBool(AnimationHash.Grounded, IsGrounded);
+    }
+
+    public void UpdateAirLogic()
+    {
         if (!IsGrounded && rb.velocity.y <= 0)
         {
             rb.AddForce(new Vector3(0, -fallMultiplier, 0) * rb.mass, ForceMode.Acceleration);
@@ -200,7 +214,7 @@ public class SpidermanCharacterController : MonoBehaviour
             }
         }
     }
-
+    
     void HandleJumpFeel()
     {
         if (IsGrounded)
@@ -238,9 +252,12 @@ public class SpidermanCharacterController : MonoBehaviour
                 }
             }
         }
-        
-        rb.useGravity = true;
-        IsOnSlope = false;
+
+        if (!CanWallRun)
+        {
+            rb.useGravity = true;
+            IsOnSlope = false;
+        }
     }
 
     private void HandleWebDetectionInput()
@@ -387,6 +404,37 @@ public class SpidermanCharacterController : MonoBehaviour
 
         model.rotation = model.parent.rotation;
         _resetModelRoutine = null;
+    }
+    
+    private void HandleWall()
+    {
+        var dir = groundCheckPos.TransformDirection(Vector3.forward).normalized;
+        if (CanWallRun)
+        {
+            dir = -_wallHits.normal;
+        }
+        if (Application.isEditor)
+        {
+            Debug.DrawRay(cachedTransform.position + Vector3.up, dir.normalized * wallCheckDist);
+        }
+
+        if (Physics.SphereCast(cachedTransform.position + Vector3.up, 0.25f, dir.normalized, out _wallHits, wallCheckDist, groundLayer))
+        {
+            var dotFromWall = Mathf.Abs(Vector3.Dot(_wallHits.normal, Vector3.up));
+                
+            //Roughly 90
+            if (dotFromWall <= 0.259f && dotFromWall >= 0)
+            {
+                //Set the normal of the wall collided with
+                LastWallNormal = _wallHits.normal;
+
+                CanWallRun = true;
+            }
+        }
+        else
+        {
+            CanWallRun = false;
+        }
     }
     
     public Vector3 GetRotatedVector3(Vector3 originalVector, Vector3 axisToRotateAround, float rotateAngle)

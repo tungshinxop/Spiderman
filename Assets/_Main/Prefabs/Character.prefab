@@ -735,7 +735,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1576962422830477207}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.037, z: 0}
+  m_LocalPosition: {x: 0, y: 0.012, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2442,6 +2442,50 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &8470100424915606944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8927229272058619013}
+  - component: {fileID: 8870504411872273979}
+  m_Layer: 0
+  m_Name: WallRun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8927229272058619013
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470100424915606944}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2361577826324863078}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8870504411872273979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470100424915606944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81c3052b6084a5bae7927d96f501111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8954339014837557415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,6 +2519,7 @@ Transform:
   - {fileID: 3617120463961269810}
   - {fileID: 9220771669249124683}
   - {fileID: 2857069769937361932}
+  - {fileID: 8927229272058619013}
   m_Father: {fileID: 9191784433491747535}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2617,11 +2662,12 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  wallCheckDist: 0.6
   turnTime: 0.1
   speedMultiplier: 10
   groundSpeed: 5
   airSpeed: 3
-  swingSpeed: 15
+  swingSpeed: 9
   groundDrag: 4
   airDrag: 2
   xBlendRate: 10
@@ -2634,6 +2680,7 @@ MonoBehaviour:
   jumpState: {fileID: 5398453040482892978}
   fallState: {fileID: 5641748512225809041}
   swingState: {fileID: 7890248164173005897}
+  wallRun: {fileID: 8870504411872273979}
   runState: {fileID: 7391590953323474153}
   idleState: {fileID: 7840507181213272457}
   currentState: {fileID: 7840507181213272457}
@@ -2643,6 +2690,8 @@ MonoBehaviour:
   HoldingMouse: 0
   PreSwingState: 0
   SwingCooldown: 0
+  CanWallRun: 0
+  LastWallNormal: {x: 0, y: 0, z: 0}
 --- !u!1 &9200662916778583124
 GameObject:
   m_ObjectHideFlags: 0

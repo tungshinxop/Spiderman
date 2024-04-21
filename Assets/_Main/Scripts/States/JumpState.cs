@@ -1,5 +1,6 @@
 ﻿
 
+using System;
 using Spiderman;
 using UnityEngine;
 
@@ -13,7 +14,13 @@ public class JumpState : BaseState
             _manager.Move(_manager.airSpeed);
         }
     }
-    
+
+    public override void UpdateState()
+    {
+        _manager.UpdateAirLogic();
+        base.UpdateState();
+    }
+
     public override void EnterState(SpidermanCharacterController manager)
     {
         base.EnterState(manager);
@@ -35,6 +42,12 @@ public class JumpState : BaseState
 
     protected override void CheckSwitchState()
     {
+        if (_manager.CanWallRun)
+        {
+            SwitchState(_manager.wallRun);
+            return;
+        }
+        
         if (_manager.IsFiredWeb())
         {
             SwitchState(_manager.swingState);
