@@ -36,7 +36,7 @@ public class SwingState : BaseState
         _currentForward = Vector3.Cross(_manager.cachedTransform.right , dirToPoint).normalized;
         _swingDirection = (dirToPoint + _currentForward).normalized;
         
-        _manager.model.forward = Vector3.Slerp(_manager.model.forward, _currentForward, 5f * Time.deltaTime);
+        _manager.model.forward = Vector3.Slerp(_manager.model.forward, _currentForward, 3f * Time.deltaTime);
         if (Application.isEditor)
         {
             DrawArrow.ForDebug(_manager.cachedTransform.position, _currentForward, Color.red);

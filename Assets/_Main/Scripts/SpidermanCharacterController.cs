@@ -309,9 +309,15 @@ public class SpidermanCharacterController : MonoBehaviour
 
         if (_pointsToCheck.Count <= 0)
         {
-            Vector3 fakePoint = cachedTransform.position + (cachedTransform.position.y > 100f ? Vector3.down * 20f  : Vector3.up * 20f) + 
-                                GetRotatedVector3(cachedTransform.forward, Vector3.up, Random.Range(-15f,15f)) * 14f;
-            _pointsToCheck.Add(fakePoint);
+            if (cachedTransform.position.y <= 100f)
+            {
+                Vector3 fakePoint = cachedTransform.position + Vector3.up * 20f + GetRotatedVector3(cachedTransform.forward, Vector3.up, Random.Range(-15f,15f)) * 14f;
+                _pointsToCheck.Add(fakePoint);
+            }
+            else
+            {
+                PreSwingState = false;
+            }
         }
     }
     
