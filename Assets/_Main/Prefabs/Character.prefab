@@ -735,7 +735,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1576962422830477207}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.037, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2612,7 +2612,7 @@ MonoBehaviour:
   capsuleCollider: {fileID: 5846330906117258841}
   groundCheckPos: {fileID: 6350633282013239319}
   slopeCheckPos: {fileID: 2087312961391298292}
-  groundRadius: 0.35
+  groundRadius: 0.15
   slopeCheckDist: 3
   groundLayer:
     serializedVersion: 2
@@ -2630,7 +2630,7 @@ MonoBehaviour:
   jumpHeight: 15
   fallMultiplier: 15
   walkableSlopeAngle: 50
-  exitSwingForce: 75
+  exitSwingForce: 50
   jumpState: {fileID: 5398453040482892978}
   fallState: {fileID: 5641748512225809041}
   swingState: {fileID: 7890248164173005897}

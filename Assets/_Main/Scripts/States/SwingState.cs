@@ -32,13 +32,8 @@ public class SwingState : BaseState
         
         if (!gameObject.activeInHierarchy || !_initializedOptimalPoint || _handIndex < 0) return;
         
-        // Vector3 dir = _optimalPoint - _manager.cachedTransform.position;
-        // float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        // var rotatedForward = _manager.GetRotatedVector3(_manager.GetRotation() * Vector3.forward, _manager.cachedTransform.right, -angle);
-        // _manager.model.forward = Vector3.Slerp(_manager.model.forward, rotatedForward, 5f * Time.deltaTime);
-        
         var dirToPoint = (_optimalPoint - _manager.cachedTransform.position).normalized;
-        _currentForward = Vector3.Cross(_manager.cachedTransform.right , dirToPoint);
+        _currentForward = Vector3.Cross(_manager.cachedTransform.right , dirToPoint).normalized;
         _swingDirection = (dirToPoint + _currentForward).normalized;
         
         _manager.model.forward = Vector3.Slerp(_manager.model.forward, _currentForward, 5f * Time.deltaTime);
@@ -69,6 +64,7 @@ public class SwingState : BaseState
         Debugger.Instance.UpdateCurrentStateDebugger(MainStates.InAir, SubStates.Swing);
         _manager.animator.SetBool(AnimationHash.Swing, true);
         _currentSwingTime = 0;
+        _manager.ResetVelocity();
         FindOptimalPoint();
         HandleWebShootAnim();
     }
@@ -87,7 +83,7 @@ public class SwingState : BaseState
         _currentSwingTime = 0;
         _distance = -1;
         _manager.PreSwingState = false;
-        _manager.SwingCooldown = 0.4f;
+        _manager.SwingCooldown = 0.65f;
         _manager.ResetModelRotation();
         base.ExitState();
     }
@@ -118,7 +114,10 @@ public class SwingState : BaseState
             }
             else
             {
-                SwitchState(_manager.fallState);
+                if (_currentSwingTime > 0.2f)
+                {
+                    SwitchState(_manager.fallState);
+                }
             }       
         }
     }

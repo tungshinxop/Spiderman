@@ -400,10 +400,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5045470768132376717, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
-      propertyPath: exitSwingForce
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5045470768132376717, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
       propertyPath: webDetectorPos
       value: 
       objectReference: {fileID: 673014389}
@@ -411,6 +407,10 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 1185584761}
+    - target: {fileID: 6350633282013239319, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.012
+      objectReference: {fileID: 0}
     - target: {fileID: 9191784433491747532, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
       propertyPath: m_Name
       value: Character

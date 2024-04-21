@@ -1178,7 +1178,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: b7f387605185b224fa726f74129f0948, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1.65
+    m_TimeScale: 2
     m_CycleOffset: 0
     m_DirectBlendParameter: XAxis
     m_Mirror: 0
@@ -1527,7 +1527,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.17
   m_TransitionOffset: 0
   m_ExitTime: 0.625
   m_HasExitTime: 0
