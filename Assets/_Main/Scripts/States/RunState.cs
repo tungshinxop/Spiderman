@@ -6,7 +6,7 @@ public class RunState : BaseState
     private void FixedUpdate()
     {
         if(!gameObject.activeInHierarchy) return;
-        _manager.Move();
+        _manager.Move( _manager.groundSpeed);
     }
     
     public override void EnterState(SpidermanCharacterController manager)
@@ -24,36 +24,28 @@ public class RunState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.PointsToCheck.Count > 0)
+        if (_manager.PressedJump && _manager.IsValidJump())
         {
-            SwitchState(_manager.swingState);
+            SwitchState(_manager.jumpState);
         }
         else
         {
-            if (_manager.PressedJump && _manager.IsValidJump())
+            if (_manager.IsGrounded)
             {
-                SwitchState(_manager.jumpState);
+                if (_manager.PressedJump && _manager.IsValidJump())
+                {
+                    SwitchState(_manager.jumpState);
+                }
+                
+                if (_manager.MoveInput == Vector3.zero)
+                {
+                    SwitchState(_manager.idleState);
+                }
             }
             else
             {
-                if (_manager.IsGrounded)
-                {
-                    if (_manager.PressedJump && _manager.IsValidJump())
-                    {
-                        SwitchState(_manager.jumpState);
-                    }
-                
-                    if (_manager.MoveInput == Vector3.zero)
-                    {
-                        SwitchState(_manager.idleState);
-                    }
-                }
-                else
-                {
-                    SwitchState(_manager.fallState);
-                }
+                SwitchState(_manager.fallState);
             }
         }
-        
     }
 }

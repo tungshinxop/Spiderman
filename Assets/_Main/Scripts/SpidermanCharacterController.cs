@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public enum MainStates
 {
@@ -27,7 +28,8 @@ public class SpidermanCharacterController : MonoBehaviour
     public Transform cameraTransform;
     public Transform cachedTransform;
     public TrailRenderer[] handTrails;
-    
+    public LineRenderer[] handWebs;
+    public Transform model;
 
     [Header("Web detector")] 
     [SerializeField] private Transform webDetectorPos;
@@ -52,6 +54,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public float speedMultiplier = 1f;
     public float groundSpeed;
     public float airSpeed;
+    public float swingSpeed = 7f;
     public float groundDrag = 4;
     public float airDrag = 2;
     public float xBlendRate = 10f;
@@ -60,6 +63,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public float jumpHeight = 10f;
     public float fallMultiplier = 10f;
     public float walkableSlopeAngle = 45f;
+    public float exitSwingForce = 30f;
     
     
     [Header("Air sub-states:")]
@@ -74,7 +78,6 @@ public class SpidermanCharacterController : MonoBehaviour
     [Header("Non-persistant data: ")]
     public BaseState currentState;
 
-    private Coroutine _webDetectionRoutine;
     private RaycastHit _slopeHit;
     private Vector3 _moveInput;
     private bool _pressedJump;
@@ -89,16 +92,24 @@ public class SpidermanCharacterController : MonoBehaviour
     [HideInInspector] public float JumpForce;    
     [HideInInspector] public bool IsGrounded;
     [HideInInspector] public bool IsOnSlope;
-
-    public List<Vector3> PointsToCheck => _pointsToCheck;
+    [HideInInspector] public bool HoldingMouse;
+    [HideInInspector] public bool PreSwingState;
+    [HideInInspector] public float SwingCooldown;
     
+    public List<Vector3> PointsToCheck => _pointsToCheck;
+
     public bool PressedJump
     {
         get => _pressedJump;
         set => _pressedJump = value;
     }
 
-    public Vector3 MoveInput => _moveInput;
+    public Vector3 MoveInput
+    {
+        get => _moveInput;
+        set => _moveInput = value;
+    }
+
     public float JumpBufferCounter
     {
         get => _jumpBufferCounter;
@@ -232,18 +243,27 @@ public class SpidermanCharacterController : MonoBehaviour
 
     private void HandleWebDetectionInput()
     {
-        var temp = webDetectorPos.position;
-        temp.x = cachedTransform.position.x;
-        temp.z = cachedTransform.position.z;
-        webDetectorPos.position = temp;
-        if (Input.GetMouseButtonDown(0) && _webDetectionRoutine == null && currentState != swingState)
+        if(SwingCooldown >= 0)
         {
-            _webDetectionRoutine = StartCoroutine(IEDetectWeb());
+            SwingCooldown -= Time.deltaTime;
+        }
+        
+        HoldingMouse = Input.GetMouseButton(0);
+        var position = cachedTransform.position;
+        webDetectorPos.position = new Vector3(position.x, position.y + 10f, position.z);
+        
+        //Input detection
+        if (HoldingMouse && !PreSwingState && currentState != swingState && !IsGrounded && SwingCooldown <= 0)
+        {
+            StartCoroutine(IEDetectWeb());
         }
     }
 
     private IEnumerator IEDetectWeb()
     {
+        PreSwingState = true;
+        var cachedWebDetector = webDetectorPos.position;
+        var cachedWebDetectorForward = webDetectorPos.forward;
         _pointsToCheck.Clear();
         var temp = new List<bool>();
         var elapsedTime = 0f;
@@ -265,30 +285,42 @@ public class SpidermanCharacterController : MonoBehaviour
                     continue;
                 }
                 
-                var upward = GetRotatedVector3(webDetectorPos.forward, Vector3.up, angleBtwRays * i);
+                var upward = GetRotatedVector3(cachedWebDetectorForward, Vector3.up, angleBtwRays * i);
                 var crossProduct = Vector3.Cross(upward, Vector3.up);
                 var dir = GetRotatedVector3(upward, crossProduct, angle);
                 RaycastHit hit;
-                if (Physics.Raycast(webDetectorPos.position, dir.normalized,  out hit, detectorRange,groundLayer))
+                if (Physics.Raycast(cachedWebDetector, dir.normalized,  out hit, detectorRange,groundLayer))
                 {
                     //Store available points
                     temp[i] = true;
                     _pointsToCheck.Add(hit.point);
                 }
-#if UNITY_EDITOR
-                Debug.DrawRay(webDetectorPos.position, dir.normalized * detectorRange, hit.collider == null ? Color.red: Color.yellow);
-#endif
+                
+                if (Application.isEditor)
+                {
+                    Debug.DrawRay(cachedWebDetector, dir.normalized * detectorRange, hit.collider == null ? Color.red: Color.yellow);
+                }
             }
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        _webDetectionRoutine = null;
+        if (_pointsToCheck.Count <= 0)
+        {
+            Vector3 fakePoint = cachedTransform.position + (cachedTransform.position.y > 100f ? Vector3.down * 20f  : Vector3.up * 20f) + 
+                                GetRotatedVector3(cachedTransform.forward, Vector3.up, Random.Range(-15f,15f)) * 14f;
+            _pointsToCheck.Add(fakePoint);
+        }
     }
     
     public bool IsValidJump()
     {
         return _jumpBufferCounter > 0 && _coyoteCounter > 0;
+    }
+
+    public bool IsFiredWeb()
+    {
+        return _pointsToCheck.Count > 0 && PreSwingState;
     }
     
     public void ResetVelocity()
@@ -298,15 +330,20 @@ public class SpidermanCharacterController : MonoBehaviour
         rb.velocity = velocity;
     }
 
-    public void Move()
+    public void Move(float speed)
     {
-        var speed = IsGrounded ? groundSpeed * speedMultiplier : airSpeed * speedMultiplier;
-        var dir = Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward;
+        speed *= speedMultiplier;
+        var dir = GetRotation() * Vector3.forward;
         if (IsOnSlope)
         {
-            dir = Vector3.ProjectOnPlane(Quaternion.Euler(0.0f, _rotation, 0.0f) * Vector3.forward, _slopeHit.normal).normalized;
+            dir = Vector3.ProjectOnPlane(GetRotation() * Vector3.forward, _slopeHit.normal).normalized;
         }
         rb.AddForce(dir * speed, ForceMode.Acceleration);
+    }
+
+    public Quaternion GetRotation()
+    {
+        return Quaternion.Euler(0.0f, _rotation, 0.0f);
     }
 
     public void SetToggleHandTrail(bool state)
@@ -316,8 +353,35 @@ public class SpidermanCharacterController : MonoBehaviour
             trail.enabled = state;
         }
     }
+
+    private Coroutine _resetModelRoutine;
     
-    private Vector3 GetRotatedVector3(Vector3 originalVector, Vector3 axisToRotateAround, float rotateAngle)
+    public void ResetModelRotation()
+    {
+        if (_resetModelRoutine != null)
+        {
+            StopCoroutine(_resetModelRoutine);
+        }
+
+        _resetModelRoutine = StartCoroutine(IEResetModel());
+    }
+    
+    IEnumerator IEResetModel()
+    {
+        var elapsedTime = 0f;
+        var duration = 0.25f;
+        while (elapsedTime < duration)
+        {
+            model.rotation = Quaternion.Slerp(model.rotation, model.parent.rotation, elapsedTime/ duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        model.rotation = model.parent.rotation;
+        _resetModelRoutine = null;
+    }
+    
+    public Vector3 GetRotatedVector3(Vector3 originalVector, Vector3 axisToRotateAround, float rotateAngle)
     {
         return Quaternion.AngleAxis(rotateAngle, axisToRotateAround) * originalVector;
     }
@@ -351,6 +415,11 @@ public class SpidermanCharacterController : MonoBehaviour
                     Gizmos.DrawSphere(point, 0.35f);
                 }
             }
+            
+            Gizmos.color = Color.blue;
+            DrawArrow.ForGizmo(headCheckPos.position, model.forward);
+            Gizmos.color = Color.green;
+            DrawArrow.ForGizmo(headCheckPos.position, model.up);
         }
     }
 #endif

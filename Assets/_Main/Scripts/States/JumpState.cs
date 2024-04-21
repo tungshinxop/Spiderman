@@ -10,7 +10,7 @@ public class JumpState : BaseState
         if(!gameObject.activeInHierarchy) return;
         if (_manager.MoveInput != Vector3.zero)
         {
-            _manager.Move();
+            _manager.Move(_manager.airSpeed);
         }
     }
     
@@ -20,10 +20,10 @@ public class JumpState : BaseState
         Debugger.Instance.UpdateCurrentStateDebugger(MainStates.InAir, SubStates.Jump);
         _manager.animator.SetBool(AnimationHash.Jump, true);
         
-        //reset velocity for a constant jump height
         _manager.PressedJump = false;
         _manager.ResetVelocity();
         _manager.JumpBufferCounter = 0;
+        _manager.rb.drag = _manager.airDrag;
         _manager.rb.AddForce(new Vector3(0, _manager.JumpForce , 0), ForceMode.Impulse);
     }
 
@@ -35,7 +35,7 @@ public class JumpState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.PointsToCheck.Count > 0)
+        if (_manager.IsFiredWeb())
         {
             SwitchState(_manager.swingState);
         }

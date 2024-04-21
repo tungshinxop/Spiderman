@@ -10,7 +10,7 @@ public class FallState : BaseState
         if(!gameObject.activeInHierarchy) return;
         if (_manager.MoveInput != Vector3.zero)
         {
-            _manager.Move();
+            _manager.Move(_manager.airSpeed);
         }
     }
     
@@ -18,6 +18,7 @@ public class FallState : BaseState
     {
         base.EnterState(manager);
         Debugger.Instance.UpdateCurrentStateDebugger(MainStates.InAir, SubStates.Fall);
+        _manager.ResetVelocity();
     }
 
     public override void UpdateState()
@@ -45,7 +46,7 @@ public class FallState : BaseState
 
     protected override void CheckSwitchState()
     {
-        if (_manager.PointsToCheck.Count > 0)
+        if (_manager.IsFiredWeb())
         {
             SwitchState(_manager.swingState);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -12,9 +13,11 @@ public class CameraController : MonoBehaviour
     
     Vector3 _rotationSmoothVelocity;
     Vector3 _currentRotation;
-
+    
     float _yaw;
     float _pitch;
+
+    private Coroutine _camAction;
     
     void LateUpdate () {
         _yaw += Input.GetAxis ("Mouse X") * mouseSensitivity;
@@ -25,5 +28,20 @@ public class CameraController : MonoBehaviour
         transform.eulerAngles = _currentRotation;
 
         cachedTransform.position = target.position - cachedTransform.forward * dstFromTarget;
+    }
+
+    public void ZoomIn()
+    {
+        
+    }
+
+    public void ZoomOut()
+    {
+        
+    }
+
+    IEnumerator IECameraZoom(float dist)
+    {
+        yield return null;
     }
 }
