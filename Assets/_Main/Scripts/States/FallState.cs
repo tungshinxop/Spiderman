@@ -18,6 +18,8 @@ public class FallState : BaseState
     {
         base.EnterState(manager);
         Debugger.Instance.UpdateCurrentStateDebugger(MainStates.InAir, SubStates.Fall);
+        var rand = Random.Range(0, 3);
+        _manager.animator.SetFloat(AnimationHash.RandomFallingAnim, rand);
         _manager.ResetVelocity();
     }
 
@@ -28,8 +30,6 @@ public class FallState : BaseState
         if (_timeFalling >= 0.35f && !_swappedToFreeFall)
         {
             _swappedToFreeFall = true;
-            var rand = Random.Range(0, 3);
-            _manager.animator.SetFloat(AnimationHash.RandomFallingAnim, rand);
             _manager.SetToggleHandTrail(true);
         }
         base.UpdateState();
