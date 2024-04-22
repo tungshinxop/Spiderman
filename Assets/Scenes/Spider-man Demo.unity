@@ -403,6 +403,10 @@ PrefabInstance:
       propertyPath: webDetectorPos
       value: 
       objectReference: {fileID: 673014389}
+    - target: {fileID: 9081088931277269424, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9191784433491747532, guid: 41e13dc2baa61234c99c078da6c676ad, type: 3}
       propertyPath: m_Name
       value: Character

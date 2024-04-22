@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -31,6 +32,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public TrailRenderer[] handTrails;
     public LineRenderer[] handWebs;
     public Transform model;
+    public ParticleSystem speedLine;
     
     [Header("Web detector")] 
     [SerializeField] private Transform webDetectorPos;
@@ -203,6 +205,10 @@ public class SpidermanCharacterController : MonoBehaviour
     {
         if (!IsGrounded && rb.velocity.y <= 0)
         {
+            if (fallMultiplier < 30)
+            {
+                fallMultiplier += Time.deltaTime * 9.81f;
+            }
             rb.AddForce(new Vector3(0, -fallMultiplier, 0) * rb.mass, ForceMode.Acceleration);
             RaycastHit hit;
             if (Physics.Raycast(slopeCheckPos.position, Vector3.down, out hit,Mathf.Infinity, groundLayer))
@@ -213,6 +219,11 @@ public class SpidermanCharacterController : MonoBehaviour
             {
                 animator.SetFloat(AnimationHash.DistFromGround, -1);
             }
+        }
+
+        if (IsGrounded)
+        {
+            fallMultiplier = 15f;
         }
     }
     

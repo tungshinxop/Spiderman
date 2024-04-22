@@ -2679,7 +2679,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4942017956233295409
 Transform:
   m_ObjectHideFlags: 0
@@ -2712,7 +2712,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -7567,6 +7567,7 @@ MonoBehaviour:
   - {fileID: 7433174119802268904}
   - {fileID: 3660735829161903766}
   model: {fileID: 7408048581186526101}
+  speedLine: {fileID: 8664246784309771989}
   webDetectorPos: {fileID: 0}
   numberOfRays: 14
   angleRange: {x: 90, y: 30}
