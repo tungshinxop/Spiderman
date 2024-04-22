@@ -31,6 +31,7 @@ public class FallState : BaseState
         {
             _swappedToFreeFall = true;
             _manager.SetToggleHandTrail(true);
+            CameraController.Instance.Zoom(3.5f, 50f);
         }
         _manager.UpdateAirLogic();
         base.UpdateState();
@@ -42,6 +43,7 @@ public class FallState : BaseState
         _manager.animator.SetFloat(AnimationHash.AirTime, _timeFalling);
         _manager.SetToggleHandTrail(false);
         _swappedToFreeFall = false;
+        CameraController.Instance.ResetCamera();
         base.ExitState();
     }
 

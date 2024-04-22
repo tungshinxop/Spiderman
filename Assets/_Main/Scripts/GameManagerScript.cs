@@ -8,6 +8,7 @@ public class GameManagerScript : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        Application.targetFrameRate = 60;
     }
     
 }

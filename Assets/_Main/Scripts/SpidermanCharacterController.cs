@@ -31,7 +31,7 @@ public class SpidermanCharacterController : MonoBehaviour
     public TrailRenderer[] handTrails;
     public LineRenderer[] handWebs;
     public Transform model;
-
+    
     [Header("Web detector")] 
     [SerializeField] private Transform webDetectorPos;
     [SerializeField] private int numberOfRays = 10;

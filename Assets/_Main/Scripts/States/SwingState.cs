@@ -66,6 +66,7 @@ public class SwingState : BaseState
         _currentSwingTime = 0;
         _manager.ResetVelocity();
         _manager.PlayWebAudio();
+        CameraController.Instance.Zoom(5f, 75f);
         FindOptimalPoint();
         HandleWebShootAnim();
     }
@@ -86,6 +87,7 @@ public class SwingState : BaseState
         _manager.PreSwingState = false;
         _manager.SwingCooldown = 0.65f;
         _manager.ResetModelRotation();
+        CameraController.Instance.ResetCamera();
         base.ExitState();
     }
 
