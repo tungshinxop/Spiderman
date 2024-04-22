@@ -205,9 +205,9 @@ public class SpidermanCharacterController : MonoBehaviour
     {
         if (!IsGrounded && rb.velocity.y <= 0)
         {
-            if (fallMultiplier < 30)
+            if (fallMultiplier < 130)
             {
-                fallMultiplier += Time.deltaTime * 9.81f;
+                fallMultiplier += Time.deltaTime * 200;
             }
             rb.AddForce(new Vector3(0, -fallMultiplier, 0) * rb.mass, ForceMode.Acceleration);
             RaycastHit hit;

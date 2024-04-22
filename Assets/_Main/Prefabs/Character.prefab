@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cachedTransform: {fileID: 8189769255565499510}
-  mouseSensitivity: 3.5
+  mouseSensitivity: 2.75
   target: {fileID: 8236829638906501948}
   dstFromTarget: 3.5
   pitchMinMax: {x: -50, y: 85}
