@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Home.unity
+    guid: 24819b426fbc3a64e8a6155377e3930d
+  - enabled: 1
+    path: Assets/Scenes/Spider-man Demo.unity
+    guid: 05ff597302129e24e89b9745cdb020aa
   m_configObjects: {}
