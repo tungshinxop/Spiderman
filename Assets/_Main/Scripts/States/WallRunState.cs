@@ -64,7 +64,15 @@ public class WallRunState : BaseState
         _manager.animator.SetBool(AnimationHash.WallRun, false);
         _manager.rb.useGravity = true;
         _manager.ResetVelocity();
-        _manager.rb.AddForce(_wallDirection * _manager.JumpForce, ForceMode.Impulse);
+        if (_manager.PressedJump)
+        {
+            var dir = _manager.GetRotatedVector3(_manager.LastWallNormal, _manager.cachedTransform.right, 60f);
+            _manager.rb.AddForce(dir.normalized * (_manager.JumpForce * 3f), ForceMode.Impulse);
+        }
+        else
+        {
+            _manager.rb.AddForce(_wallDirection * _manager.JumpForce, ForceMode.Impulse);
+        }
         base.ExitState();
     }
 

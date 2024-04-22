@@ -65,6 +65,7 @@ public class SwingState : BaseState
         _manager.animator.SetBool(AnimationHash.Swing, true);
         _currentSwingTime = 0;
         _manager.ResetVelocity();
+        _manager.PlayWebAudio();
         FindOptimalPoint();
         HandleWebShootAnim();
     }
@@ -112,7 +113,6 @@ public class SwingState : BaseState
             if (_manager.HoldingMouse)
             {
                 var dot = Vector3.Dot(_manager.cachedTransform.forward, _swingDirection);
-                Debug.LogError(dot);
                 if (_currentSwingTime > 5f || (dot < -0.5f && _currentSwingTime > 0.1f))
                 {
                     SwitchState(_manager.fallState);

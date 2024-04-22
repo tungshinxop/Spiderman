@@ -38,6 +38,7 @@ public class SpidermanCharacterController : MonoBehaviour
     [SerializeField] private Vector2 angleRange = new Vector2(90, 30);
     [SerializeField] private float durationCheck = 0.75f;
     [SerializeField] private float detectorRange = 30f;
+    [SerializeField] private AudioClip webAudioClip;
     
     [Header("Head")]
     [SerializeField] private Transform headCheckPos;
@@ -272,7 +273,7 @@ public class SpidermanCharacterController : MonoBehaviour
         webDetectorPos.position = new Vector3(position.x, position.y + 10f, position.z);
         
         //Input detection
-        if (HoldingMouse && !PreSwingState && currentState != swingState && !IsGrounded && SwingCooldown <= 0)
+        if (HoldingMouse && !PreSwingState && currentState != swingState && currentState != wallRun && !IsGrounded && SwingCooldown <= 0)
         {
             StartCoroutine(IEDetectWeb());
         }
@@ -326,7 +327,7 @@ public class SpidermanCharacterController : MonoBehaviour
 
         if (_pointsToCheck.Count <= 0)
         {
-            if (cachedTransform.position.y <= 100f)
+            if (cachedTransform.position.y <= 170f)
             {
                 Vector3 fakePoint = cachedTransform.position + Vector3.up * 20f + GetRotatedVector3(cachedTransform.forward, Vector3.up, Random.Range(-15f,15f)) * 14f;
                 _pointsToCheck.Add(fakePoint);
@@ -425,9 +426,7 @@ public class SpidermanCharacterController : MonoBehaviour
             //Roughly 90
             if (dotFromWall <= 0.259f && dotFromWall >= 0)
             {
-                //Set the normal of the wall collided with
                 LastWallNormal = _wallHits.normal;
-
                 CanWallRun = true;
             }
         }
@@ -440,6 +439,11 @@ public class SpidermanCharacterController : MonoBehaviour
     public Vector3 GetRotatedVector3(Vector3 originalVector, Vector3 axisToRotateAround, float rotateAngle)
     {
         return Quaternion.AngleAxis(rotateAngle, axisToRotateAround) * originalVector;
+    }
+    
+    public void PlayWebAudio()
+    {
+        AudioSource.PlayClipAtPoint(webAudioClip, headCheckPos.position, 1);
     }
     
 #if UNITY_EDITOR
@@ -479,4 +483,5 @@ public class SpidermanCharacterController : MonoBehaviour
         }
     }
 #endif
+    
 }

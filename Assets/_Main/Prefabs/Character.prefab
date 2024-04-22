@@ -2653,6 +2653,7 @@ MonoBehaviour:
   angleRange: {x: 90, y: 30}
   durationCheck: 0.1
   detectorRange: 30
+  webAudioClip: {fileID: 8300000, guid: 7b87f711ba10c664c891c82921c8efaa, type: 3}
   headCheckPos: {fileID: 2948366450845276806}
   capsuleCollider: {fileID: 5846330906117258841}
   groundCheckPos: {fileID: 6350633282013239319}
@@ -2662,7 +2663,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  wallCheckDist: 0.6
+  wallCheckDist: 0.525
   turnTime: 0.1
   speedMultiplier: 10
   groundSpeed: 5
